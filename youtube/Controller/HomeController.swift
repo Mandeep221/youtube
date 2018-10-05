@@ -11,29 +11,78 @@ import UIKit
 class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
 
     //videos array
-    var videos: [Video] = {
-        var taylorSwiftChannel = Channel()
-        taylorSwiftChannel.name = "TaylorSwift"
-        taylorSwiftChannel.profileImageName = "taylor_swift"
+//    var videos: [Video] = {
+//        var taylorSwiftChannel = Channel()
+//        taylorSwiftChannel.name = "TaylorSwift"
+//        taylorSwiftChannel.profileImageName = "taylor_swift"
+//
+//        var blankSpaceVideo = Video()
+//        blankSpaceVideo.title = "Taylor Swift - Blank Space"
+//        blankSpaceVideo.thumbnailImageName = "taylor_swift_blank_space"
+//        blankSpaceVideo.channel = taylorSwiftChannel
+//        blankSpaceVideo.numberOFViews = 3456456456
+//
+//
+//        var badBloodVideo = Video()
+//        badBloodVideo.title = "Taylor Swift - Bad Blood featuring Kendrick Lamar"
+//        badBloodVideo.thumbnailImageName = "taylor_swift_bad_blood"
+//        badBloodVideo.channel = taylorSwiftChannel
+//        badBloodVideo.numberOFViews = 6556456456
+//
+//        return [blankSpaceVideo, badBloodVideo]
+//    }()
+    
+    var videos: [Video]?
+    
+    func fetchVideos(){
+        let url = NSURL(string: "https://s3-us-west-2.amazonaws.com/youtubeassets/home.json")
+        let request = URLRequest(url:url! as URL)
         
-        var blankSpaceVideo = Video()
-        blankSpaceVideo.title = "Taylor Swift - Blank Space"
-        blankSpaceVideo.thumbnailImageName = "taylor_swift_blank_space"
-        blankSpaceVideo.channel = taylorSwiftChannel
-        blankSpaceVideo.numberOFViews = 3456456456
-        
-        
-        var badBloodVideo = Video()
-        badBloodVideo.title = "Taylor Swift - Bad Blood featuring Kendrick Lamar"
-        badBloodVideo.thumbnailImageName = "taylor_swift_bad_blood"
-        badBloodVideo.channel = taylorSwiftChannel
-        badBloodVideo.numberOFViews = 6556456456
-        
-        return [blankSpaceVideo, badBloodVideo]
-    }()
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if error != nil{
+                print(error!)
+                return
+            }
+            
+            // in case of success
+            do{
+              let json = try JSONSerialization.jsonObject(with: data!, options: .mutableContainers)
+                
+                self.videos = [Video]()
+                
+                for dictionary in json as! [[String : AnyObject]] {
+                    let video = Video()
+                    video.title = dictionary["title"] as? String
+                    video.thumbnailImageName = dictionary["thumbnail_image_name"] as? String
+                    
+                    let channelDictionary = dictionary["channel"] as? [String : AnyObject]
+                    
+                    let channel = Channel()
+                    channel.name = channelDictionary!["name"] as? String
+                    channel.profileImageName = channelDictionary!["profile_image_name"] as? String
+                    
+                    video.channel = channel
+                    self.videos?.append(video)
+                }
+                
+                // reload collectionView, on main UI thread
+                DispatchQueue.main.async{
+                    self.collectionView?.reloadData()
+                }
+                
+            }catch let jsonError{
+                print (jsonError)
+            }
+            
+            
+        }.resume()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // fetch videos
+        fetchVideos()
         
         navigationItem.title = "Home"
         navigationController?.navigationBar.isTranslucent = false
@@ -66,8 +115,11 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
     }
     
+    let settingsLauncher = SettingsLauncher()
+    
+    
     @objc func handleMore(){
-        print(123)
+        settingsLauncher.showSettings()
     }
     
     @objc func handleSearch(){
@@ -87,12 +139,13 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return videos.count
+        
+        return videos?.count ?? 0
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! VideoCell
-        cell.video = videos[indexPath.item]
+        cell.video = videos?[indexPath.item]
         cell.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
         return cell
     }

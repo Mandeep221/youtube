@@ -29,6 +29,9 @@ class VideoCell: BaseCell{
         didSet{
             titleLabel.text = video?.title
             
+            setUpThumbnailImage()
+            setUpProfileImage()
+            
             if let thumbnailImageName = video?.thumbnailImageName{
                 thumbnailImageView.image = UIImage(named: thumbnailImageName)
             }
@@ -61,6 +64,20 @@ class VideoCell: BaseCell{
         }
     }
     
+    func setUpProfileImage(){
+        if let profileImageUrl = video?.channel?.profileImageName{
+            userProfileImageView.loadImageUsingUrlString(urlString: profileImageUrl)
+        
+        }
+    }
+    
+    
+    func setUpThumbnailImage(){
+        if let thumbnailImageUrl = video?.thumbnailImageName{
+             thumbnailImageView.loadImageUsingUrlString(urlString: thumbnailImageUrl)
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUpViews()
@@ -79,6 +96,7 @@ class VideoCell: BaseCell{
         imageView.image = UIImage(named: "taylor_swift")
         imageView.layer.cornerRadius = 22
         imageView.layer.masksToBounds = true
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     

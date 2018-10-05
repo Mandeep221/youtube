@@ -31,3 +31,39 @@ extension UIView{
     }
     
 }
+
+// cache for images
+let imageCache = NSCache<NSString, UIImage>()
+
+extension UIImageView{
+    func loadImageUsingUrlString(urlString: String){
+        let url = URL(string: urlString)
+        
+        image = nil
+        
+//        if let imageFromCache = imageCache.object(forKey: urlString as NSString) as? UIImage{
+//            self.image = imageFromCache
+//            print("FROM CACHE")
+//            return
+//        }
+        
+        let request = URLRequest(url:url! as URL)
+        URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+            
+            if error != nil{
+                print(error!)
+                return
+            }
+            
+            // image successfully fetched, now update UI on main thread
+            DispatchQueue.main.async{
+                // Store the fetched image  in cache
+//                let imageToCache = UIImage(data: data!)
+//                imageCache.setObject(imageToCache!, forKey: urlString as NSString)
+                self.image = UIImage(data: data!)
+                
+            }
+            
+        }).resume()
+    }
+}
