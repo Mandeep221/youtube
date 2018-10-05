@@ -9,13 +9,23 @@
 import UIKit
 
 class Setting: NSObject{
-    var name: String
+    var name: SettingName
     var imageName: String
     
-    init(name: String, imageName: String) {
+    init(name: SettingName, imageName: String) {
         self.name = name
         self.imageName = imageName
     }
+}
+
+// enums for type safe usage of strings
+enum SettingName: String {
+    case settings = "Settings"
+    case help = "Help"
+    case termsPrivacy = "Terms & privacy policy"
+    case switchAccount = "Switch Account"
+    case sendFeedback = "Send feedback"
+    case cancel = "Cancel"
 }
 
 class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout{
@@ -32,12 +42,13 @@ class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDe
     
     let settings: [Setting] = {
         
-        return [Setting(name: "Settings", imageName: "settings"),
-                Setting(name: "Help", imageName: "help"),
-                Setting(name: "Terms of privacy", imageName: "terms_and_privacy"),
-                Setting(name: "Send Feedback", imageName: "feedback"),
-                Setting(name: "Switch account", imageName: "switch_account"),
-                Setting(name: "Cancel", imageName: "cancel")]
+        let cancelSetting = Setting(name: .cancel, imageName: "cancel")
+        return [Setting(name: .settings, imageName: "settings"),
+                Setting(name: .help, imageName: "help"),
+                Setting(name: .termsPrivacy, imageName: "terms_and_privacy"),
+                Setting(name: .sendFeedback, imageName: "feedback"),
+                Setting(name: .switchAccount, imageName: "switch_account"),
+                cancelSetting]
         
     }()
     
@@ -92,6 +103,23 @@ class SettingsLauncher: NSObject, UICollectionViewDataSource, UICollectionViewDe
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         return 0 
+    }
+    
+    var homeController: HomeController?
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            self.blackView.alpha = 0
+            if let window = UIApplication.shared.keyWindow{
+                 self.collectionView.frame = CGRect(x: 0, y: window.frame.height , width: self.collectionView.frame.width, height: self.collectionView.frame.height)
+            }
+           
+        }) { (completed: Bool) in
+            let setting = self.settings[indexPath.item]
+            if setting.name != .cancel{
+              self.homeController?.showControllerForSetting(setting: setting)
+            }
+        }
     }
     override init(){
         super.init()

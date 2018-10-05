@@ -115,11 +115,25 @@ class HomeController: UICollectionViewController, UICollectionViewDelegateFlowLa
         
     }
     
-    let settingsLauncher = SettingsLauncher()
+    lazy var settingsLauncher: SettingsLauncher = {
+        let launcher = SettingsLauncher()
+        launcher.homeController = self
+        return launcher
+    }()
     
     
     @objc func handleMore(){
         settingsLauncher.showSettings()
+    }
+    
+    func showControllerForSetting(setting: Setting){
+         let dummySettingsViewController = UIViewController()
+        dummySettingsViewController.navigationItem.title = setting.name.rawValue
+        dummySettingsViewController.view.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+        navigationController?.navigationBar.tintColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+        // for nav bar title color
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+        navigationController?.pushViewController(dummySettingsViewController, animated: true)
     }
     
     @objc func handleSearch(){

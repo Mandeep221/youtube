@@ -14,7 +14,7 @@ class SettingsCell: BaseCell{
     var setting: Setting?{
         didSet{
             if let name = setting?.name{
-                nameLabel.text = name
+                nameLabel.text = name.rawValue
             }
           
             if let imageName = setting?.imageName{
