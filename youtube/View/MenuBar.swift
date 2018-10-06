@@ -20,6 +20,13 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         return cv
     }()
     
+    let horizontalBarView: UIView = {
+        let bar = UIView()
+        bar.backgroundColor = UIColor(white: 0.97, alpha: 1)
+        bar.translatesAutoresizingMaskIntoConstraints = false
+        return bar
+    }()
+    
     let cellId = "cellId"
     let imageNames = ["home","trending","subscription","account"]
     
@@ -32,6 +39,39 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
         
         let selectedIndexPath = NSIndexPath(item: 0, section: 0)
         collectionView.selectItem(at: selectedIndexPath as IndexPath, animated: false, scrollPosition: [])
+        
+        setUpHorizontalBar()
+    }
+    
+    var horizontalBarLeftAnchorConstraint: NSLayoutConstraint?
+    
+    func setUpHorizontalBar(){
+        addSubview(horizontalBarView)
+        
+        // old school way, usinf frame
+//        horizontalBarView.frame = CGRect(x: 0, y: y!, width: collectionView.frame.width/4, height: height!)
+//
+        //new shcool way in iOS 9
+        //we need x, y, width, height
+        
+        // this means, the left edge of horizontalBarView will match the left edge of the
+        //whole menu view the first time it gets rendered
+        horizontalBarLeftAnchorConstraint = horizontalBarView.leftAnchor.constraint(equalTo: self.leftAnchor)
+        horizontalBarLeftAnchorConstraint?.isActive = true
+
+
+        // this means, the bottom edge of horizontalBarView will match the bottom edge of the
+        //whole menu view the first time it gets rendered
+        horizontalBarView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        
+        // this means, width of horizontalBarView will be 1/4 of the
+        //whole menu view width the first time it gets rendered
+        horizontalBarView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1/4).isActive = true
+
+        // this means, height of horizontalBarView will be a CGFloat constant of
+        //value 8 the first time it gets rendered
+        horizontalBarView.heightAnchor.constraint(equalToConstant: 4).isActive = true
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -52,6 +92,20 @@ class MenuBar: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UIC
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         return 0
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let xValue = CGFloat(indexPath.item) * frame.width/4
+        
+        // xValue/leftEdge changes everytime index of the selected item changes,
+        //hence bar changes position
+        horizontalBarLeftAnchorConstraint?.constant = xValue
+        
+        // animate the bar
+        UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 1, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
+            self.layoutIfNeeded()
+        }, completion: nil)
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -77,6 +131,7 @@ class MenuCell: BaseCell{
             imageView.tintColor = isSelected ? UIColor.white : UIColor.rgb(red: 91, green: 14, blue: 13, alpha: 1)
         }
     }
+    
     override func setUpViews() {
         super.setUpViews()
         addSubview(imageView)

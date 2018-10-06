@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A50348CA21686E1B005BE136 /* ApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50348C921686E1B005BE136 /* ApiService.swift */; };
 		A528D6322166F5F400BE64A0 /* SettingsLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A528D6312166F5F400BE64A0 /* SettingsLauncher.swift */; };
 		A56958BD2165AD6F0042736D /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56958BC2165AD6F0042736D /* Video.swift */; };
 		A56958BF2165B9540042736D /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56958BE2165B9540042736D /* Channel.swift */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A50348C921686E1B005BE136 /* ApiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiService.swift; sourceTree = "<group>"; };
 		A528D6312166F5F400BE64A0 /* SettingsLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLauncher.swift; sourceTree = "<group>"; };
 		A56958BC2165AD6F0042736D /* Video.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
 		A56958BE2165B9540042736D /* Channel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
@@ -49,6 +51,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A50348C821686E00005BE136 /* ApiService */ = {
+			isa = PBXGroup;
+			children = (
+				A50348C921686E1B005BE136 /* ApiService.swift */,
+			);
+			path = ApiService;
+			sourceTree = "<group>";
+		};
 		A56958BB2165AD590042736D /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -104,6 +114,7 @@
 		A5E137FB21630C7D0000F47E /* youtube */ = {
 			isa = PBXGroup;
 			children = (
+				A50348C821686E00005BE136 /* ApiService */,
 				A56958BB2165AD590042736D /* Model */,
 				A595053321647B0000339DB8 /* Controller */,
 				A5950530216479FC00339DB8 /* View */,
@@ -195,6 +206,7 @@
 				A56958BD2165AD6F0042736D /* Video.swift in Sources */,
 				A595053221647AE900339DB8 /* VideoCell.swift in Sources */,
 				A528D6322166F5F400BE64A0 /* SettingsLauncher.swift in Sources */,
+				A50348CA21686E1B005BE136 /* ApiService.swift in Sources */,
 				A595052F216479B100339DB8 /* Extensions.swift in Sources */,
 				A5E137FD21630C7D0000F47E /* AppDelegate.swift in Sources */,
 				A5950535216484FE00339DB8 /* MenuBar.swift in Sources */,
